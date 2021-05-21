@@ -9,15 +9,14 @@
   "author": "hiro0218",
   "dependencies": {
     "@axe-core/puppeteer": "^4.2.0",
-    "axe-reports": "^1.1.11"
-  },
-  "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
+    "axe-reports": "^1.1.11",
     "esbuild-register": "^2.5.0",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "^8.3.0",
     "prettier": "^2.3.0",
+    "puppeteer": "^8.0.0",
     "typescript": "^4.2.4"
   }
 }
