@@ -8,12 +8,17 @@ const config = {
   locale: AXE_LOCALE_JA,
 };
 
-// テスト対象の URL を読み込み
-const urlsFile = fs.readFileSync("./urls.txt", "utf-8");
-const urls_list = urlsFile.replace(/\r?\n/g, ",");
+const readUrls = () => {
+  const urlsFile = fs.readFileSync("./urls.txt", "utf-8");
+  const urls_list = urlsFile.replace(/\r\n?/g, '\n');
+  const urls = urls_list.split('\n');
+
+  return urls;
+}
 
 (async () => {
-  const urls = urls_list.split(",");
+  // テスト対象の URL を読み込み
+  const urls = readUrls();
 
   // 見出し行
   AxeReports.createCsvReportHeaderRow();
