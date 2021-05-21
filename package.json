@@ -1,0 +1,14 @@
+{
+  "name": "axe-test-zozotown",
+  "version": "1.0.0",
+  "description": "",
+  "main": "axe-test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hiro0218",
+  "dependencies": {
+    "@axe-core/puppeteer": "^4.2.0",
+    "axe-reports": "^1.1.11"
+  }
+}
