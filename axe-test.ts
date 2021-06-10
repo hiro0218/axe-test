@@ -41,12 +41,27 @@ const readUrls = () => {
     await page.setBypassCSP(true);
 
     // デバイスのエミュレートをする
-    // await page.emulate(puppeteer.devices['iPhone 8']);
+    if (url.includes('/sp')) {
+      await page.emulate(puppeteer.devices['iPhone X']);
+    }
+
+    // ページ最下部まで進む
+    let previousHeight;
+    while (true) {
+      try {
+        previousHeight = await page.evaluate('document.body.scrollHeight')
+        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+        await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`)
+      } catch (e) {
+        // consola.log('Scroll End Page')
+        break;
+      }
+    }
 
     // ページ読み込み
     await Promise.all([
       page.setDefaultNavigationTimeout(0),
-      page.waitForNavigation({ waitUntil: ["load", "networkidle2"] }),
+      page.waitForNavigation({ waitUntil: ["load", "networkidle0"] }),
       page.goto(url).catch(() => {
         consola.error(`Connection failed: ${url}`);
       }),
