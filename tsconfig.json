@@ -1,5 +1,4 @@
 {
-  "extends": "@tsconfig/node14/tsconfig.json",
   "compilerOptions": {
     "lib": [
       "dom",
@@ -7,5 +6,6 @@
       "esnext"
     ],
     "resolveJsonModule": true,
+    "esModuleInterop": true,
   }
 }
