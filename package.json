@@ -2,9 +2,9 @@
   "name": "axe-test-zozotown",
   "version": "1.0.0",
   "description": "",
-  "main": "axe-test.js",
+  "main": "index.js",
   "scripts": {
-    "test": "node --require esbuild-register ./axe-test.ts"
+    "test": "node --require esbuild-register ./index.ts"
   },
   "author": "hiro0218",
   "dependencies": {
