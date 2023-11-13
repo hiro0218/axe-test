@@ -8,8 +8,7 @@ import AXE_LOCALE_JA from "axe-core/locales/ja.json";
 const FILE_NAME = "result";
 const FILE_EXTENSION = "csv";
 const CSV_FILE_PATH = `./${FILE_NAME}.${FILE_EXTENSION}`;
-const CSV_HEADER =
-  "URL,結果の種別,ルールID,影響度,ヘルプページ,タグ,要素のソース,問題の説明,要素の位置\r";
+const CSV_HEADER = "URL,種別,影響度,ヘルプ,HTML要素,メッセージ,DOM要素\r";
 const CSV_PHRASE = {
   Violation: "違反",
   Incomplete: "要確認",
