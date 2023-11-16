@@ -1,18 +1,32 @@
 import fs from "node:fs";
 import { AxePuppeteer } from "@axe-core/puppeteer";
-import type { Spec, AxeResults } from "axe-core";
+import type { Spec, AxeResults, ImpactValue } from "axe-core";
 import AxeReports from "axe-reports";
 import puppeteer, { Browser, Frame, Page } from "puppeteer";
 import AXE_LOCALE_JA from "axe-core/locales/ja.json";
+
+type AxeResultsKeys = keyof Omit<
+  AxeResults,
+  | "toolOptions"
+  | "testEngine"
+  | "testRunner"
+  | "testEnvironment"
+  | "url"
+  | "timestamp"
+>;
 
 const FILE_NAME = "result";
 const FILE_EXTENSION = "csv";
 const CSV_FILE_PATH = `./${FILE_NAME}.${FILE_EXTENSION}`;
 const CSV_HEADER = "URL,種別,影響度,ヘルプ,HTML要素,メッセージ,DOM要素\r";
-const CSV_PHRASE = {
-  Violation: "違反",
-  Incomplete: "要確認",
-  Inapplicable: "該当なし",
+const CSV_TRANSLATE_RESULT_GROUPS: AxeResultsKeys[] = [
+  "inapplicable",
+  "violations",
+  "incomplete",
+  "passes",
+];
+
+const CSV_TRANSLATE_IMPACT_VALUE: { [key in string]: string } = {
   critical: "緊急 (Critical)",
   serious: "深刻 (Serious)",
   moderate: "普通 (Moderate)",
@@ -62,23 +76,25 @@ const scrollToBottom = async (page: Page | Frame) => {
 };
 
 /**
- * Axeの結果を翻訳する
- * @param {AxeResults} result - Axeによるアクセシビリティテストの結果
+ * Axeの結果の影響度の値を日本語に置き換える
+ * @param {AxeResults} data - Axeの結果
+ * @returns {AxeResults}
  */
-function translateAxeResult(result: AxeResults) {
-  for (let key in result) {
-    if (typeof result[key] === "string") {
-      Object.keys(CSV_PHRASE).forEach((phrase) => {
-        result[key] = result[key].replace(
-          new RegExp(phrase, "g"),
-          CSV_PHRASE[phrase]
-        );
-      });
-    } else if (typeof result[key] === "object") {
-      translateAxeResult(result[key]);
+const replaceImpactValues = (data: AxeResults): AxeResults => {
+  for (let i = 0; i < CSV_TRANSLATE_RESULT_GROUPS.length; i++) {
+    const key = CSV_TRANSLATE_RESULT_GROUPS[i];
+
+    for (let j = 0; j < data[key].length; j++) {
+      const node = data[key][j];
+
+      if (node.impact !== null && node.impact !== undefined) {
+        node.impact = CSV_TRANSLATE_IMPACT_VALUE[node.impact] as ImpactValue;
+      }
     }
   }
-}
+
+  return data;
+};
 
 /**
  * Axeによるアクセシビリティテストを実行する
@@ -86,7 +102,10 @@ function translateAxeResult(result: AxeResults) {
  * @param {string} url - テストするURL
  * @returns {Promise<AxeResults>} - テスト結果
  */
-const runAxeTest = async (page: Page | Frame, url: string) => {
+const runAxeTest = async (
+  page: Page | Frame,
+  url: string
+): Promise<AxeResults> => {
   console.log(`Testing ${url}...`);
 
   // 指定されたURLにアクセス
@@ -105,7 +124,7 @@ const runAxeTest = async (page: Page | Frame, url: string) => {
     .withTags(["wcag2a", "wcag21a"])
     .analyze();
 
-  translateAxeResult(results);
+  replaceImpactValues(results);
 
   return results;
 };
@@ -126,7 +145,7 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
     AxeReports.processResults(results, FILE_EXTENSION, FILE_NAME);
   } catch (error) {
     // エラー発生時の処理
-    console.error(`Error testing ${url}:`, error.message);
+    console.error(`Error testing ${url}:`, error);
   } finally {
     // ページを閉じる
     await page.close();
@@ -141,8 +160,9 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
   if (fs.existsSync(CSV_FILE_PATH)) {
     fs.rmSync(CSV_FILE_PATH);
   }
+
   // 新しいCSVファイルを作成
-  fs.writeFileSync(CSV_FILE_PATH, CSV_HEADER);
+  await Bun.write(CSV_FILE_PATH, CSV_HEADER);
 
   // ヘッドレスブラウザを起動
   const browser = await puppeteer.launch({ headless: "new" });
