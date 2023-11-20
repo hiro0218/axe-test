@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { AxePuppeteer } from "@axe-core/puppeteer";
 import type { Spec, AxeResults, ImpactValue } from "axe-core";
 import AxeReports from "axe-reports";
-import puppeteer, { Browser, Frame, Page } from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import AXE_LOCALE_JA from "axe-core/locales/ja.json";
 
 type AxeResultsKeys = keyof Omit<
@@ -51,9 +51,9 @@ const readUrls = async (): Promise<string[]> => {
 
 /**
  * ページの最下部までスクロールする
- * @param {Page | Frame} page - PuppeteerのPageまたはFrameオブジェクト
+ * @param {Page} page - PuppeteerのPageオブジェクト
  */
-const scrollToBottom = async (page: Page | Frame) => {
+const scrollToBottom = async (page: Page) => {
   let previousHeight;
 
   while (true) {
@@ -98,12 +98,12 @@ const replaceImpactValues = (data: AxeResults): AxeResults => {
 
 /**
  * Axeによるアクセシビリティテストを実行する
- * @param {Page | Frame} page - PuppeteerのPageまたはFrameオブジェクト
+ * @param {Page} page - PuppeteerのPageオブジェクト
  * @param {string} url - テストするURL
  * @returns {Promise<AxeResults>} - テスト結果
  */
 const runAxeTest = async (
-  page: Page | Frame,
+  page: Page,
   url: string
 ): Promise<AxeResults> => {
   console.log(`Testing ${url}...`);
@@ -162,7 +162,7 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
   }
 
   // 新しいCSVファイルを作成
-  await Bun.write(CSV_FILE_PATH, CSV_HEADER);
+  fs.writeFileSync(CSV_FILE_PATH, CSV_HEADER);
 
   // ヘッドレスブラウザを起動
   const browser = await puppeteer.launch({ headless: "new" });
