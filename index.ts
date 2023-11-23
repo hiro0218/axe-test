@@ -136,32 +136,23 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
   await page.setBypassCSP(true);
 
   try {
-    // アクセシビリティテストを実行し、結果をログに出力
     const results = await runAxeTest(page, url);
-    // 結果をCSV形式で保存
     AxeReports.processResults(results, FILE_EXTENSION, FILE_NAME);
   } catch (error) {
-    // エラー発生時の処理
     console.error(`Error testing ${url}:`, error);
   } finally {
-    // ページを閉じる
     await page.close();
   }
 }
 
 (async () => {
-  // URLをファイルから読み込む
   const urls = await readUrls();
 
-  // 既存のCSVファイルがあれば削除
   if (fs.existsSync(CSV_FILE_PATH)) {
     fs.rmSync(CSV_FILE_PATH);
   }
-
-  // 新しいCSVファイルを作成
   fs.writeFileSync(CSV_FILE_PATH, CSV_HEADER);
 
-  // ヘッドレスブラウザを起動
   const browser = await puppeteer.launch({ headless: "new" });
 
   try {
