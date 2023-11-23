@@ -4,24 +4,14 @@ import type { Spec, AxeResults, ImpactValue } from "axe-core";
 import AxeReports from "axe-reports";
 import puppeteer, { Browser, Page } from "puppeteer";
 import AXE_LOCALE_JA from "axe-core/locales/ja.json";
-import type { AxeResultsKeys } from "./types";
-
-const FILE_NAME = "result";
-const FILE_EXTENSION = "csv";
-const CSV_FILE_PATH = `./${FILE_NAME}.${FILE_EXTENSION}`;
-const CSV_HEADER = "URL,種別,影響度,ヘルプ,HTML要素,メッセージ,DOM要素\r";
-const CSV_TRANSLATE_RESULT_GROUPS: AxeResultsKeys[] = [
-	"inapplicable",
-	"violations",
-	"incomplete",
-	"passes",
-];
-const CSV_TRANSLATE_IMPACT_VALUE = {
-	critical: "緊急 (Critical)",
-	serious: "深刻 (Serious)",
-	moderate: "普通 (Moderate)",
-	minor: "軽微 (Minor)",
-};
+import {
+	FILE_NAME,
+	FILE_EXTENSION,
+	CSV_FILE_PATH,
+	CSV_HEADER,
+	CSV_TRANSLATE_RESULT_GROUPS,
+	CSV_TRANSLATE_IMPACT_VALUE,
+} from "./constant";
 
 /**
  * URLをファイルから非同期で読み込む
