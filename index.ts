@@ -76,23 +76,25 @@ const scrollToBottom = async (page: Page) => {
 
 /**
  * Axeの結果の影響度の値を日本語に置き換える
- * @param {AxeResults} data - Axeの結果
- * @returns {AxeResults}
  */
-const replaceImpactValues = (data: AxeResults): AxeResults => {
-  for (let i = 0; i < CSV_TRANSLATE_RESULT_GROUPS.length; i++) {
-    const key = CSV_TRANSLATE_RESULT_GROUPS[i];
+const replaceImpactValues = (axeResult: AxeResults): AxeResults => {
+  const result = { ...axeResult };
 
-    for (let j = 0; j < data[key].length; j++) {
-      const node = data[key][j];
-
-      if (node.impact !== null && node.impact !== undefined) {
-        node.impact = CSV_TRANSLATE_IMPACT_VALUE[node.impact] as ImpactValue;
-      }
+  CSV_TRANSLATE_RESULT_GROUPS.forEach((key) => {
+    if (result[key] && Array.isArray(result[key])) {
+      result[key] = result[key].map((item) => {
+        if (item.impact && CSV_TRANSLATE_IMPACT_VALUE[item.impact]) {
+          return {
+            ...item,
+            impact: CSV_TRANSLATE_IMPACT_VALUE[item.impact] as ImpactValue,
+          };
+        }
+        return item;
+      });
     }
-  }
+  });
 
-  return data;
+  return result;
 };
 
 /**
@@ -101,10 +103,7 @@ const replaceImpactValues = (data: AxeResults): AxeResults => {
  * @param {string} url - テストするURL
  * @returns {Promise<AxeResults>} - テスト結果
  */
-const runAxeTest = async (
-  page: Page,
-  url: string
-): Promise<AxeResults> => {
+const runAxeTest = async (page: Page, url: string): Promise<AxeResults> => {
   console.log(`Testing ${url}...`);
 
   // 指定されたURLにアクセス
@@ -122,7 +121,7 @@ const runAxeTest = async (
     .configure({ locale: AXE_LOCALE_JA } as unknown as Spec)
     .withTags(["wcag2a", "wcag21a"])
     .analyze()
-    .then(analyzeResults => replaceImpactValues(analyzeResults))
+    .then((analyzeResults) => replaceImpactValues(analyzeResults));
 
   return results;
 };
