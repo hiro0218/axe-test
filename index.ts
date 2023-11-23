@@ -25,8 +25,7 @@ const CSV_TRANSLATE_RESULT_GROUPS: AxeResultsKeys[] = [
   "incomplete",
   "passes",
 ];
-
-const CSV_TRANSLATE_IMPACT_VALUE: { [key in string]: string } = {
+const CSV_TRANSLATE_IMPACT_VALUE = {
   critical: "緊急 (Critical)",
   serious: "深刻 (Serious)",
   moderate: "普通 (Moderate)",
@@ -122,9 +121,8 @@ const runAxeTest = async (
   const results = await new AxePuppeteer(page)
     .configure({ locale: AXE_LOCALE_JA } as unknown as Spec)
     .withTags(["wcag2a", "wcag21a"])
-    .analyze();
-
-  replaceImpactValues(results);
+    .analyze()
+    .then(analyzeResults => replaceImpactValues(analyzeResults))
 
   return results;
 };
