@@ -1,1 +1,1 @@
-declare module 'axe-reports';
+declare module "axe-reports";

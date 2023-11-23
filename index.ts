@@ -65,7 +65,7 @@ const scrollToBottom = async (page: Page) => {
       // ページの高さが変わるまで待つ
       await page.waitForFunction(
         `document.body.scrollHeight > ${previousHeight}`,
-        { timeout: 10000 }
+        { timeout: 10000 },
       );
     } catch {
       // タイムアウト時にループを抜ける
@@ -165,7 +165,7 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
   const browser = await puppeteer.launch({ headless: "new" });
 
   try {
-    await Promise.all(urls.map(url => setupAndRunAxeTest(url, browser)));
+    await Promise.all(urls.map((url) => setupAndRunAxeTest(url, browser)));
   } catch (error) {
     console.error(`Error during tests: ${error}`);
   } finally {
