@@ -164,11 +164,11 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
   // ヘッドレスブラウザを起動
   const browser = await puppeteer.launch({ headless: "new" });
 
-  // 全てのURLに対してテストを直列実行
-  for (const url of urls) {
-    await setupAndRunAxeTest(url, browser);
+  try {
+    await Promise.all(urls.map(url => setupAndRunAxeTest(url, browser)));
+  } catch (error) {
+    console.error(`Error during tests: ${error}`);
+  } finally {
+    await browser.close();
   }
-
-  // ブラウザを閉じる
-  await browser.close();
 })();
