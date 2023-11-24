@@ -12,6 +12,7 @@
   "dependencies": {
     "@axe-core/puppeteer": "^4.8.1",
     "axe-reports": "^1.1.11",
+    "dotenv": "^16.3.1",
     "puppeteer": "^21.5.2"
   },
   "peerDependencies": {

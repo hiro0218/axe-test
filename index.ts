@@ -1,8 +1,10 @@
+import "dotenv/config";
+
 import fs from "node:fs";
 import { AxePuppeteer } from "@axe-core/puppeteer";
 import type { Spec, AxeResults, ImpactValue } from "axe-core";
 import AxeReports from "axe-reports";
-import puppeteer, { Browser, Page } from "puppeteer";
+import puppeteer, { Browser, Page, Device } from "puppeteer";
 import AXE_LOCALE_JA from "axe-core/locales/ja.json";
 import {
 	FILE_NAME,
@@ -115,6 +117,19 @@ const runAxeTest = async (page: Page, url: string): Promise<AxeResults> => {
 async function setupAndRunAxeTest(url: string, browser: Browser) {
 	const page = await browser.newPage();
 	await page.setBypassCSP(true);
+
+	if (process.env.DEVICE_TYPE === "1") {
+		const userAgentString = await browser.userAgent();
+		await page.emulate({
+			userAgent: userAgentString,
+			viewport: {
+				width: 375,
+				height: 812,
+				isMobile: true,
+				hasTouch: true,
+			},
+		});
+	}
 
 	try {
 		const results = await runAxeTest(page, url);
