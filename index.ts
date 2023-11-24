@@ -17,7 +17,6 @@ import {
 
 /**
  * URLをファイルから非同期で読み込む
- * @returns {Promise<string[]>} URLの配列
  */
 const readUrls = async (): Promise<string[]> => {
 	// ファイルを非同期で読み込む
@@ -33,7 +32,6 @@ const readUrls = async (): Promise<string[]> => {
 
 /**
  * ページの最下部までスクロールする
- * @param {Page} page - PuppeteerのPageオブジェクト
  */
 const scrollToBottom = async (page: Page) => {
 	let previousHeight;
@@ -85,9 +83,6 @@ const replaceImpactValues = (axeResult: AxeResults): AxeResults => {
 
 /**
  * Axeによるアクセシビリティテストを実行する
- * @param {Page} page - PuppeteerのPageオブジェクト
- * @param {string} url - テストするURL
- * @returns {Promise<AxeResults>} - テスト結果
  */
 const runAxeTest = async (page: Page, url: string): Promise<AxeResults> => {
 	console.log(`Testing ${url}...`);
@@ -114,8 +109,6 @@ const runAxeTest = async (page: Page, url: string): Promise<AxeResults> => {
 
 /**
  * URLごとにページを設定し、アクセシビリティテストを実行する
- * @param {string} url - テストするURL
- * @param {Browser} browser - PuppeteerのBrowserオブジェクト
  */
 async function setupAndRunAxeTest(url: string, browser: Browser) {
 	const page = await browser.newPage();
