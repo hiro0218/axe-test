@@ -119,9 +119,9 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
 	await page.setBypassCSP(true);
 
 	if (process.env.DEVICE_TYPE === "1") {
-		const userAgentString = await browser.userAgent();
+		const userAgent = await browser.userAgent();
 		await page.emulate({
-			userAgent: userAgentString,
+			userAgent,
 			viewport: {
 				width: 375,
 				height: 812,
