@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { AxePuppeteer } from "@axe-core/puppeteer";
 import type { Spec, AxeResults, ImpactValue } from "axe-core";
 import AxeReports from "axe-reports";
-import puppeteer, { Browser, Page, Device } from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import AXE_LOCALE_JA from "axe-core/locales/ja.json";
 import {
 	FILE_NAME,
