@@ -63,19 +63,22 @@ const scrollToBottom = async (page: Page) => {
 const replaceImpactValues = (axeResult: AxeResults): AxeResults => {
 	const result = { ...axeResult };
 
-	CSV_TRANSLATE_RESULT_GROUPS.forEach((key) => {
+	for (const key of CSV_TRANSLATE_RESULT_GROUPS) {
 		if (result[key] && Array.isArray(result[key])) {
-			result[key] = result[key].map((item) => {
+			const updatedItems = [];
+			for (const item of result[key]) {
 				if (item.impact && CSV_TRANSLATE_IMPACT_VALUE[item.impact]) {
-					return {
+					updatedItems.push({
 						...item,
 						impact: CSV_TRANSLATE_IMPACT_VALUE[item.impact] as ImpactValue,
-					};
+					});
+				} else {
+					updatedItems.push(item);
 				}
-				return item;
-			});
+			}
+			result[key] = updatedItems;
 		}
-	});
+	}
 
 	return result;
 };
