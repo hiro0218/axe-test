@@ -31,34 +31,42 @@ const readUrls = async (): Promise<string[]> => {
 };
 
 /**
+ * 指定した時間だけ待機する関数
+ * @param ms 待機時間（ミリ秒）
+ */
+const waitForTimeout = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+/**
  * ページの最下部までスクロールする
  */
-const scrollToBottom = async (page: Page) => {
+const scrollToBottom = async (
+  page: Page,
+  maxScrolls = 10,
+  waitTime = 3000,
+): Promise<void> => {
   let previousHeight = 0;
-  let currentHeight = 0;
+  let scrollCount = 0;
 
-  while (previousHeight < currentHeight) {
+  while (scrollCount < maxScrolls) {
     // 現在のページの高さを取得
-    currentHeight = await page.evaluate("document.body.scrollHeight") as number;
-    previousHeight = currentHeight;
+    const currentHeight: number = await page.evaluate(
+      () => document.body.scrollHeight,
+    );
+
+    // 前回と高さが変わらなければ終了
+    if (previousHeight === currentHeight) break;
 
     // ページの最下部までスクロール
     await page.evaluate("window.scrollTo(0, document.body.scrollHeight)");
+    previousHeight = currentHeight;
 
-    try {
-      // ページの高さが変わるまで待つ
-      await page.waitForFunction(
-        `document.body.scrollHeight > ${previousHeight}`,
-        { timeout: 5000 },
-      );
+    // 指定された時間だけ待機
+    await waitForTimeout(waitTime);
 
-      // 高さが変わらない場合はループを抜ける
-      if (previousHeight === currentHeight) {
-        break;
-      }
-    } catch {
-      break;
-    }
+    // スクロール回数をカウント
+    scrollCount++;
   }
 };
 
