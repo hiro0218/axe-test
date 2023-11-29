@@ -129,6 +129,11 @@ async function setupAndRunAxeTest(url: string, browser: Browser) {
 	const page = await browser.newPage();
 	await page.setBypassCSP(true);
 
+	/**
+	 * process.env.DEVICE_TYPE
+	 * @type {"0" | "1" | undefined}
+	 * @description "0" はデスクトップ / "1" はモバイル
+	 */
 	if (process.env.DEVICE_TYPE === "1") {
 		const userAgent = await browser.userAgent();
 		await page.emulate({
