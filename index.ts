@@ -19,9 +19,8 @@ import {
  * URLをファイルから非同期で読み込む
  */
 const readUrls = async (): Promise<string[]> => {
-	// ファイルを非同期で読み込む
 	const urlsFile = await fs.promises.readFile("./urls.txt", "utf-8");
-	// 改行で分割し、空の行を除外
+
 	const urls = urlsFile
 		.replace(/\r\n?/g, "\n")
 		.split("\n")
@@ -50,22 +49,17 @@ const scrollToBottom = async (
 	let scrollCount = 0;
 
 	while (scrollCount < maxScrolls) {
-		// 現在のページの高さを取得
 		const currentHeight: number = await page.evaluate(
 			() => document.body.scrollHeight,
 		);
 
-		// 前回と高さが変わらなければ終了
 		if (previousHeight === currentHeight) break;
 
-		// ページの最下部までスクロール
 		await page.evaluate("window.scrollTo(0, document.body.scrollHeight)");
 		previousHeight = currentHeight;
 
-		// 指定された時間だけ待機
 		await waitForTimeout(waitTime);
 
-		// スクロール回数をカウント
 		scrollCount++;
 	}
 };
@@ -109,10 +103,8 @@ const runAxeTest = async (page: Page, url: string): Promise<AxeResults> => {
 
 	console.log(`page title: ${await page.title()}`);
 
-	// ページの最下部までスクロール
 	await scrollToBottom(page);
 
-	// AxePuppeteerを使用してアクセシビリティテストを実行
 	const results = await new AxePuppeteer(page)
 		.configure({ locale: AXE_LOCALE_JA } as unknown as Spec)
 		.withTags(["wcag2a", "wcag21a", "best-practice"])
